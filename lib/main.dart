@@ -1,3 +1,4 @@
+import 'package:biblioteca/Usuario/cadastro.dart';
 import 'package:biblioteca/telainicio.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff65350f))
       ),
       home: telaInicio(),
+      routes: <String, WidgetBuilder> {
+        '/cadastro': (BuildContext context) => const Cadastro(),
+      },
     );
   }
 }

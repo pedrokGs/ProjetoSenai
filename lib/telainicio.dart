@@ -1,10 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
+/*
 final List<Image> imgList = [
   Image.asset('assets/img/carousel1.jpg', width: double.infinity, height: double.infinity,),
   Image.asset('assets/img/carousel2.jpg'),
+];
+*/
+
+final List<String> imgList = [
+  'assets/img/carousel1.jpg',
+  'assets/img/carousel2.jpg',
+  'assets/img/carousel3.jpg',
+  'assets/img/carousel4.jpg'
 ];
 
 class telaInicio extends StatefulWidget {
@@ -32,7 +40,16 @@ class _telaInicioState extends State<telaInicio> {
                   aspectRatio: 2,
                 ),
 
-                items: imgList,
+                items: imgList
+                    .map((item) => Container(
+                  child: Center(
+                      child: Image.asset(
+                        item,
+                        fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.height,
+                      )),
+                ))
+                    .toList(),
                 /*
                 {
                   return Builder(
@@ -117,7 +134,9 @@ class _telaInicioState extends State<telaInicio> {
                             */
                           ],
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/cadastro');
+                        },
                       ),
                     ),
 
