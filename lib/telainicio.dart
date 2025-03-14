@@ -17,13 +17,13 @@ class _telaInicioState extends State<telaInicio> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CarouselSlider(
-            options: CarouselOptions(height: 400.0),
+            options: CarouselOptions(height: 617.0),
             items: [1,2,3,4,5].map((i) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      margin: EdgeInsets.symmetric(horizontal: 0),
                       decoration: BoxDecoration(
                           color: Colors.amber
                       ),
@@ -35,6 +35,7 @@ class _telaInicioState extends State<telaInicio> {
           ),
 
           Container(
+            alignment: Alignment.bottomCenter,
             color: Theme.of(context).colorScheme.primary,
             height: 300,
             width: 500,
