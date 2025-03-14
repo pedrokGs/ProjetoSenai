@@ -1,8 +1,16 @@
+import 'package:biblioteca/Paginas/homePage.dart';
 import 'package:biblioteca/Usuario/cadastro.dart';
-import 'package:biblioteca/telainicio.dart';
+import 'package:biblioteca/Paginas/telainicio.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -23,6 +31,7 @@ class MyApp extends StatelessWidget {
       home: telaInicio(),
       routes: <String, WidgetBuilder> {
         '/cadastro': (BuildContext context) => const Cadastro(),
+        '/homePage': (BuildContext context) => const HomePage(),
       },
     );
   }
