@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1069072473692",
+    "project_id": "projetobiblioteca-477e4",
+    "storage_bucket": "projetobiblioteca-477e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069072473692:android:11d1b2647abea342405099",
+        "android_client_info": {
+          "package_name": "com.example.biblioteca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069072473692-afhqvg4pef0po62c7q4u05aop6ek9dvp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaPx4Cq6c9kD_QMsJna7HG3ImRTkxU7zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069072473692-afhqvg4pef0po62c7q4u05aop6ek9dvp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1069072473692-l422a5t1mrjuak3i5soaq7v85dd7mbmc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.biblioteca"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
