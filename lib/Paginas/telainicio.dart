@@ -101,7 +101,7 @@ class _telaInicioState extends State<telaInicio> {
                             Text(
                               "CADASTRAR",
                               style: TextStyle(
-                                fontSize: 50,
+                                fontSize: 38,
                                 color: Colors.white,
                                 shadows: <Shadow>[
                                   Shadow(
@@ -135,7 +135,7 @@ class _telaInicioState extends State<telaInicio> {
                           ],
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/cadastro');
+                          Navigator.pushNamed(context, '/loginCadastro', arguments: {'tipo': 'cadastro'});
                         },
                       ),
                     ),
@@ -156,14 +156,14 @@ class _telaInicioState extends State<telaInicio> {
                             vertical: 20,
                           ),
                           textStyle: TextStyle(
-                            fontSize: 40,
+                            fontSize: 38,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         child: Text(
                           "ENTRAR",
                           style: TextStyle(
-                            fontSize: 50,
+                            fontSize: 38,
                             color: Colors.white,
                             shadows: <Shadow>[
                               Shadow(
@@ -180,7 +180,9 @@ class _telaInicioState extends State<telaInicio> {
                             fontFamily: 'Harmoni',
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/loginCadastro', arguments: {'tipo': 'login'});
+                        },
                       ),
                     ),
                   ],

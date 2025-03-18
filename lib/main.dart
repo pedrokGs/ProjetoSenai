@@ -1,5 +1,5 @@
 import 'package:biblioteca/Paginas/homePage.dart';
-import 'package:biblioteca/Usuario/cadastro.dart';
+import 'package:biblioteca/Usuario/loginCadastro.dart';
 import 'package:biblioteca/Paginas/telainicio.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,14 +24,13 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-
         //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff65350f))
       ),
       home: telaInicio(),
       routes: <String, WidgetBuilder> {
-        '/cadastro': (BuildContext context) => const Cadastro(),
-        '/homePage': (BuildContext context) => const HomePage(),
+        '/loginCadastro': (BuildContext context) => const loginCadastro(),
+        '/home': (BuildContext context) => const HomePage(),
       },
     );
   }
