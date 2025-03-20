@@ -33,7 +33,7 @@ class _loginCadastroState extends State<loginCadastro> {
   Future<void> _signInWithGoogle() async {
     UserCredential? userCredential = await _authService.signInWithGoogle();
     if (userCredential != null) {
-      Navigator.pushReplacementNamed(context, '/home'); // Substitua '/home' pela sua rota principal
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ocorreu um erro ao fazer login com o Google.")));
     }
@@ -62,11 +62,14 @@ class _loginCadastroState extends State<loginCadastro> {
               _emailController.text, _senhaController.text);
           await _firestoreService.addUser(
               userCredential.user!.uid, {'email': _emailController.text, 'nome': _nomeController.text, 'idioma': _idioma});
+              print("Cadastro Bem sucedido!");
         } else {
           userCredential = await _authService.signInWithEmailAndPassword(
               _emailController.text, _senhaController.text);
+              print("Login Bem sucedido!");
         }
-        Navigator.pushReplacementNamed(context, '/home'); // Substitua '/home' pela sua rota principal
+        print("Navegando até a rota main");
+        Navigator.pushNamed(context, '/home');
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(e.message ?? "Ocorreu um erro inesperado")));
@@ -89,6 +92,7 @@ class _loginCadastroState extends State<loginCadastro> {
           padding: EdgeInsets.all(30),
           margin: EdgeInsets.all(20),
           child: Form(
+            key: _formKey,
             child: Column(
               children: [
                 Container(
@@ -214,7 +218,7 @@ class _loginCadastroState extends State<loginCadastro> {
                         onChanged: (String? newValue) {
                           setState(() {
                             _idioma =
-                            newValue!; // Atualiza a variável _idioma
+                            newValue!;
                           });
                         },
                         decoration: InputDecoration(
@@ -264,11 +268,14 @@ class _loginCadastroState extends State<loginCadastro> {
                                 "Por favor, aceite os termos e condições")));
                         return;
                       }
+                      await _signInWithEmail();
+                      /*
                       UserCredential userCredential = await _authService
                           .createUserWithEmailAndPassword(_emailController.text, _senhaController.text);
                       await _firestoreService.addUser(
                         userCredential.user!.uid,
                           {'nome': _nomeController.text, 'email': _emailController.text, 'senha': _senhaController.text, 'idioma': _idioma});
+                    */
                     },
                     child: Text(
                       'Cadastro',
@@ -288,8 +295,7 @@ class _loginCadastroState extends State<loginCadastro> {
                       padding: EdgeInsets.all(10),
                     ),
                     onPressed: () async {
-                      UserCredential userCredential = await _authService
-                          .signInWithEmailAndPassword(_emailController.text, _senhaController.text);
+                      await _signInWithEmail();
                     },
                     child: Text(
                       'Login',
