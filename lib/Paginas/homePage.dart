@@ -110,8 +110,7 @@ class _HomePageState extends State<HomePage> {
                                   height: 200.0,
                                   enableInfiniteScroll: true,
                                   disableCenter: true,
-                                  viewportFraction:
-                                      0.45 // Ajusta o viewportFraction
+                                  viewportFraction: 0.45,
                                 ),
                                 items:
                                     livros.map((livro) {
