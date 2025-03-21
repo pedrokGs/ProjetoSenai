@@ -40,6 +40,36 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<List<String>> getAudiobooksEscutados(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+      await _firestoreService.firestore
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists) {
+        List<dynamic> audiobooks = userDoc.get('audiobooks');
+        return audiobooks.map((item) => item.toString()).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Erro ao obter audiobooks escutados: $e');
+      return [];
+    }
+  }
+
+  Stream<QuerySnapshot> getAudiobooksFiltrados(List<String> audiobooksLidos) {
+    if (audiobooksLidos.isEmpty) {
+      return Stream.empty();
+    } else {
+      return _firestoreService.firestore
+          .collection('audiobooks')
+          .where(FieldPath.documentId, whereIn: audiobooksLidos)
+          .snapshots();
+    }
+  }
+
   Stream<QuerySnapshot> getLivrosFiltrados(List<String> livrosLidos) {
     if (livrosLidos.isEmpty) {
       return Stream.empty();
@@ -157,11 +187,127 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Container(),
+
+            SizedBox(
+              height: MediaQuery.of(context).size.height*0.05,
+            ),
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    " Audiobooks iniciados",
+                    style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(color: Color(0xFFedc9af)),
+                    child: FutureBuilder<List<String>>(
+                      future: getAudiobooksEscutados(userId),
+                      builder: (context, snapshotAudiobooksEscutados) {
+                        if (snapshotAudiobooksEscutados.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        if (snapshotAudiobooksEscutados.hasError ||
+                            !snapshotAudiobooksEscutados.hasData) {
+                          return Text('Erro ao carregar audiobooks escutados');
+                        }
+                        List<String> audiobooksEscutados = snapshotAudiobooksEscutados.data!;
+                        return StreamBuilder<QuerySnapshot>(
+                          stream: getAudiobooksFiltrados(audiobooksEscutados),
+                          builder: (context, snapshotAudiobooks) {
+                            if (!snapshotAudiobooks.hasData) {
+                              return CircularProgressIndicator();
+                            }
+                            final audibooks = snapshotAudiobooks.data!.docs;
+                            return Padding(
+                              // Adiciona padding
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                              ),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  height: 200.0,
+                                  enableInfiniteScroll: true,
+                                  disableCenter: true,
+                                  viewportFraction: 0.45,
+                                ),
+                                items:
+                                audibooks.map((livro) {
+                                  return Builder(
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        width:
+                                        MediaQuery.of(
+                                          context,
+                                        ).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFedc9af),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            CachedNetworkImage(
+                                              imageUrl: livro['imagem'],
+                                              height: 200,
+                                              width: 120,
+                                              fit: BoxFit.cover,
+                                              placeholder:
+                                                  (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Container(),
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.shifting,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Color(0xFF834d40),
+        items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          backgroundColor: Color(0xFF834d40),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search),
+          label: 'Procurar',
+          backgroundColor: Color(0xFF834d40),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat),
+          label: 'Chats',
+          backgroundColor: Color(0xFF834d40),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.android),
+          label: 'Chats',
+          backgroundColor: Color(0xFF834d40),
+        ),
+      ],),
     );
   }
 }
