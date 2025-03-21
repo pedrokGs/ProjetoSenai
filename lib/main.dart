@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       home: telaInicio(),
       routes: <String, WidgetBuilder> {
         '/loginCadastro': (BuildContext context) => const loginCadastro(),
-        '/home': (BuildContext context) => const HomePage(),
+        '/home': (BuildContext context) => HomePage(),
       },
     );
   }
