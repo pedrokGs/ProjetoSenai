@@ -43,10 +43,10 @@ class _HomePageState extends State<HomePage> {
   Future<List<String>> getAudiobooksEscutados(String userId) async {
     try {
       DocumentSnapshot userDoc =
-      await _firestoreService.firestore
-          .collection('users')
-          .doc(userId)
-          .get();
+          await _firestoreService.firestore
+              .collection('users')
+              .doc(userId)
+              .get();
       if (userDoc.exists) {
         List<dynamic> audiobooks = userDoc.get('audiobooks');
         return audiobooks.map((item) => item.toString()).toList();
@@ -131,7 +131,6 @@ class _HomePageState extends State<HomePage> {
                             }
                             final livros = snapshotLivros.data!.docs;
                             return Padding(
-                              // Adiciona padding
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 5.0,
                               ),
@@ -159,17 +158,22 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             child: Row(
                                               children: [
-                                                CachedNetworkImage(
-                                                  imageUrl: livro['imagem'],
-                                                  height: 200,
-                                                  width: 120,
-                                                  fit: BoxFit.cover,
-                                                  placeholder:
-                                                      (context, url) =>
-                                                          CircularProgressIndicator(),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Icon(Icons.error),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(context, '/detalhesLivro', arguments: livro.id);
+                                                  },
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: livro['imagem'],
+                                                    height: 200,
+                                                    width: 120,
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            CircularProgressIndicator(),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Icon(Icons.error),
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -188,9 +192,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            SizedBox(
-              height: MediaQuery.of(context).size.height*0.05,
-            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +214,8 @@ class _HomePageState extends State<HomePage> {
                             !snapshotAudiobooksEscutados.hasData) {
                           return Text('Erro ao carregar audiobooks escutados');
                         }
-                        List<String> audiobooksEscutados = snapshotAudiobooksEscutados.data!;
+                        List<String> audiobooksEscutados =
+                            snapshotAudiobooksEscutados.data!;
                         return StreamBuilder<QuerySnapshot>(
                           stream: getAudiobooksFiltrados(audiobooksEscutados),
                           builder: (context, snapshotAudiobooks) {
@@ -233,40 +236,49 @@ class _HomePageState extends State<HomePage> {
                                   viewportFraction: 0.45,
                                 ),
                                 items:
-                                audibooks.map((livro) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                        ),
-                                        width:
-                                        MediaQuery.of(
-                                          context,
-                                        ).size.width,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFedc9af),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            CachedNetworkImage(
-                                              imageUrl: livro['imagem'],
-                                              height: 200,
-                                              width: 120,
-                                              fit: BoxFit.cover,
-                                              placeholder:
-                                                  (context, url) =>
-                                                  CircularProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                  Icon(Icons.error),
+                                    audibooks.map((audiobook) {
+                                      return Builder(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 5,
                                             ),
-                                          ],
-                                        ),
+                                            width:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFedc9af),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/detalhesAudiobook',
+                                                      arguments: audiobook.id,
+                                                    );
+                                                  },
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: audiobook['imagem'],
+                                                    height: 200,
+                                                    width: 120,
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            CircularProgressIndicator(),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Icon(Icons.error),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                }).toList(),
+                                    }).toList(),
                               ),
                             );
                           },
@@ -287,27 +299,28 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey,
         backgroundColor: Color(0xFF834d40),
         items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-          backgroundColor: Color(0xFF834d40),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Procurar',
-          backgroundColor: Color(0xFF834d40),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
-          label: 'Chats',
-          backgroundColor: Color(0xFF834d40),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.android),
-          label: 'Chats',
-          backgroundColor: Color(0xFF834d40),
-        ),
-      ],),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+            backgroundColor: Color(0xFF834d40),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Procurar',
+            backgroundColor: Color(0xFF834d40),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chats',
+            backgroundColor: Color(0xFF834d40),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.android),
+            label: 'Chats',
+            backgroundColor: Color(0xFF834d40),
+          ),
+        ],
+      ),
     );
   }
 }

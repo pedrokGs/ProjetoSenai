@@ -1,4 +1,6 @@
+import 'package:biblioteca/Paginas/detalhesAudiobook.dart';
 import 'package:biblioteca/Paginas/homePage.dart';
+import 'package:biblioteca/Paginas/detalhesLivro.dart';
 import 'package:biblioteca/Usuario/loginCadastro.dart';
 import 'package:biblioteca/Paginas/telainicio.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/loginCadastro': (BuildContext context) => const loginCadastro(),
         '/home': (BuildContext context) => HomePage(),
+        '/detalhesLivro': (BuildContext context) => DetalhesLivro(),
+        '/detalhesAudiobook': (BuildContext context) => DetalhesAudiobook(),
       },
     );
   }
