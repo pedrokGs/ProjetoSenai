@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
   final FirestoreService _firestoreService = FirestoreService();
   final FirebaseAuthService _firebaseAuth = FirebaseAuthService();
 
@@ -320,7 +321,29 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Color(0xFF834d40),
           ),
         ],
+        currentIndex: _selectedIndex, //New
+        onTap: _onItemTapped,
       ),
     );
   }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+
+      switch (_selectedIndex) {
+        case 0:
+          Navigator.pushNamed(context, '/home');
+          break;
+        case 1:
+          Navigator.pushNamed(context, '/pesquisar');
+          break;
+        case 2:
+          Navigator.pushNamed(context, '/chatroom');
+        case 3:
+          Navigator.pushNamed(context, '/aiChat');
+      }
+    });
+  }
 }
+
