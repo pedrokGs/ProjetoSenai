@@ -1,5 +1,7 @@
+import 'package:biblioteca/FirebaseAuthService.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -13,11 +15,18 @@ class DetalhesLivro extends StatefulWidget {
 class _DetalhesLivroState extends State<DetalhesLivro> {
   @override
   Widget build(BuildContext context) {
+    FirebaseAuthService _firebaseAuth = FirebaseAuthService();
+    late User? user = _firebaseAuth.getCurrentUser();
+    late String userId = user!.uid;
     final String livroId = ModalRoute.of(context)!.settings.arguments as String;
 
     final DocumentReference livro = FirebaseFirestore.instance
         .collection('livros')
         .doc(livroId);
+
+    final DocumentReference userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId);
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +116,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                               Column(
                                 children: [
                                   Text(
-                                    data['leitores'] ?? '0',
+                                    data['leitores'].toString() ?? '0',
                                     style: const TextStyle(
                                       fontSize: 24,
                                       color: Colors.white,
@@ -131,7 +140,10 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                     // Conteúdo do painel
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -156,9 +168,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                   ),
                                   Text(
                                     data['autor'] ?? 'Autor não disponível',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ],
                               ),
@@ -174,9 +184,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                 child: SingleChildScrollView(
                                   child: Text(
                                     data['sinopse'] ?? "Sinopse indisponível",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ),
                               ),
@@ -202,7 +210,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 24,),
+                            SizedBox(height: 24),
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -213,7 +221,36 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                   backgroundColor: const Color(0xFF834d40),
                                   padding: const EdgeInsets.all(16),
                                 ),
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  final userDoc = await userRef.get();
+
+                                  if (userDoc.exists &&
+                                      userDoc.data() != null) {
+                                    final userData =
+                                        userDoc.data()!
+                                            as Map<
+                                              String,
+                                              dynamic
+                                            >;
+                                    List<dynamic> leiturasAtuais =
+                                        userData['leituras'] != null
+                                            ? List<dynamic>.from(
+                                              userData['leituras'],
+                                            )
+                                            : [];
+
+                                    leiturasAtuais.add(livroId);
+
+                                    await userRef.update({
+                                      'leituras': leiturasAtuais,
+                                    });
+                                  } else {
+                                    await userRef.update({
+                                      'leituras': [livroId],
+                                    });
+                                  }
+                                },
+
                                 child: const Text(
                                   'Ler agora',
                                   style: TextStyle(
@@ -243,7 +280,9 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                 ),
                 minHeight: 80,
                 maxHeight: MediaQuery.of(context).size.height * 0.6,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24.0),
+                ),
               ),
             ],
           );

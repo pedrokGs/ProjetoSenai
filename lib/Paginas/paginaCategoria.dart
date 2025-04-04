@@ -15,27 +15,24 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
   final FirestoreService _firestoreService = FirestoreService();
   int _selectedIndex = 1;
 
-  Future<List<String>> getLivrosCategoria(String categoria) async {
+  Future<List<DocumentSnapshot>> getLivrosCategoria(String categoria) async {
     try {
-      DocumentSnapshot userDoc =
-      await _firestoreService.firestore
-          .collection('livros')
-          .doc(userId)
-          .get();
-      if (userDoc.exists) {
-        List<dynamic> leituras = userDoc.get('leituras');
-        return leituras.map((item) => item.toString()).toList();
-      } else {
-        return [];
-      }
+      QuerySnapshot querySnapshot =
+          await _firestoreService.firestore
+              .collection('livros')
+              .where('categoria', arrayContains: categoria)
+              .get();
+      return querySnapshot.docs;
     } catch (e) {
-      print('Erro ao obter livros lidos: $e');
-      return [];
+      print('Erro ao obter livros por categoria: $e');
+      return []; // Retorna uma lista vazia em caso de erro
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final String categoria =
+        ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -59,88 +56,80 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    " Leituras Iniciadas",
+                    " Principais Livros de ${categoria}",
                     style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
                   ),
                   Container(
                     decoration: BoxDecoration(color: Color(0xFFedc9af)),
-                    child: FutureBuilder<List<String>>(
-                      future: getLivrosCategoria(categoria),
-                      builder: (context, snapshotLivrosLidos) {
-                        if (snapshotLivrosLidos.connectionState ==
+                    child: FutureBuilder<List<DocumentSnapshot>>(
+                      future: getLivrosCategoria(
+                        categoria,
+                      ), // Use a função correta aqui
+                      builder: (context, snapshotLivros) {
+                        if (snapshotLivros.connectionState ==
                             ConnectionState.waiting) {
                           return CircularProgressIndicator();
                         }
-                        if (snapshotLivrosLidos.hasError ||
-                            !snapshotLivrosLidos.hasData) {
-                          return Text('Erro ao carregar livros lidos');
+                        if (snapshotLivros.hasError ||
+                            !snapshotLivros.hasData ||
+                            snapshotLivros.data!.isEmpty) {
+                          return Text(
+                            'Nenhum livro encontrado para esta categoria.',
+                          );
                         }
-                        List<String> livrosLidos = snapshotLivrosLidos.data!;
-                        return StreamBuilder<QuerySnapshot>(
-                          stream: getLivrosFiltrados(livrosLidos),
-                          builder: (context, snapshotLivros) {
-                            if (!snapshotLivros.hasData) {
-                              return CircularProgressIndicator();
-                            }
-                            final livros = snapshotLivros.data!.docs;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                              ),
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 200.0,
-                                  enableInfiniteScroll: true,
-                                  disableCenter: true,
-                                  viewportFraction: 0.45,
-                                ),
-                                items:
-                                    livros.map((livro) {
-                                      return Builder(
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: 5,
-                                            ),
-                                            width:
-                                                MediaQuery.of(
+                        final livros = snapshotLivros.data!;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              height: 200.0,
+                              enableInfiniteScroll: true,
+                              disableCenter: true,
+                              viewportFraction: 0.45,
+                            ),
+                            items:
+                                livros.map((livro) {
+                                  return Builder(
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFedc9af),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
                                                   context,
-                                                ).size.width,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFedc9af),
+                                                  '/detalhesLivro',
+                                                  arguments: livro.id,
+                                                );
+                                              },
+                                              child: CachedNetworkImage(
+                                                imageUrl: livro['imagem'],
+                                                height: 200,
+                                                width: 120,
+                                                fit: BoxFit.cover,
+                                                placeholder:
+                                                    (context, url) =>
+                                                        CircularProgressIndicator(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                              ),
                                             ),
-                                            child: Row(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(
-                                                      context,
-                                                      '/detalhesLivro',
-                                                      arguments: livro.id,
-                                                    );
-                                                  },
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: livro['imagem'],
-                                                    height: 200,
-                                                    width: 120,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            CircularProgressIndicator(),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Icon(Icons.error),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
+                                          ],
+                                        ),
                                       );
-                                    }).toList(),
-                              ),
-                            );
-                          },
+                                    },
+                                  );
+                                }).toList(),
+                          ),
                         );
                       },
                     ),

@@ -39,7 +39,9 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                 mainAxisSpacing: 0,
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Ficção Científica');
+                    },
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -53,7 +55,10 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Terror');
+                    },
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -68,7 +73,7 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
 
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'aventura');
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Aventura');
                     },
                     child: Container(
                       padding: EdgeInsets.all(4),
@@ -83,7 +88,9 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Romance');
+                    },
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -97,7 +104,9 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Ação');
+                    },
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -111,7 +120,8 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Drama');},
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -125,7 +135,8 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Suspense');},
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -139,7 +150,8 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Poesia');},
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -153,7 +165,8 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Mistério');},
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -167,7 +180,8 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
                   ),
 
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context,'/paginaCategoria', arguments: 'Fantasia');},
                     child: Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
