@@ -1,6 +1,8 @@
 import 'package:biblioteca/Paginas/detalhesAudiobook.dart';
 import 'package:biblioteca/Paginas/homePage.dart';
 import 'package:biblioteca/Paginas/detalhesLivro.dart';
+import 'package:biblioteca/Paginas/paginaCategoria.dart';
+import 'package:biblioteca/Paginas/pesquisa_Categoria.dart';
 import 'package:biblioteca/Paginas/pesquisar.dart';
 import 'package:biblioteca/Usuario/loginCadastro.dart';
 import 'package:biblioteca/Paginas/telainicio.dart';
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
         '/detalhesLivro': (BuildContext context) => DetalhesLivro(),
         '/detalhesAudiobook': (BuildContext context) => DetalhesAudiobook(),
         '/pesquisar' : (BuildContext context) => Pesquisar(),
+        '/pesquisaCategoria' : (BuildContext context) => PesquisaCategoria(),
+        '/paginaCategoria' : (BuildContext context) => PaginaCategoria(),
       },
     );
   }

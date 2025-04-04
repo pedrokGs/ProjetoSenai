@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -51,38 +52,97 @@ class _PesquisarState extends State<Pesquisar> {
             ),
           ),
 
-          SizedBox(height: 54),
+          SizedBox(height: 27),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              mainAxisSpacing: 4,
               children: [
-                InkWell(
-                  onTap: () {
-
-                  },
+                GestureDetector(
+                  onTap: () {},
                   child: Container(
+                    padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF834d40),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    child: Image.asset('assets/img/btnPresencial.png'),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/6rFYwtb.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
 
-                InkWell(
-                  onTap: () {
-
-                  },
+                GestureDetector(
+                  onTap: () {},
                   child: Container(
+                    padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    child: Image.asset('assets/img/btnLivros.png'),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/Cyufels.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/pesquisaCategoria');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/v30mFts.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/bALZpkM.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/bglIOUu.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.imgur.com/hyd6yVR.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ],
