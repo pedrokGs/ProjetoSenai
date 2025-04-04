@@ -249,6 +249,8 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                       'leituras': [livroId],
                                     });
                                   }
+
+                                  Navigator.pushNamed(context, '/home');
                                 },
 
                                 child: const Text(

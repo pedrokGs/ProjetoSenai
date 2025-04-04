@@ -25,7 +25,7 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
       return querySnapshot.docs;
     } catch (e) {
       print('Erro ao obter livros por categoria: $e');
-      return []; // Retorna uma lista vazia em caso de erro
+      return [];
     }
   }
 
