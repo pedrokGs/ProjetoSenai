@@ -24,13 +24,13 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
         child: Column(
           children: [
             SizedBox(height: 20,),
-            Text("CATEGORIAS", style: TextStyle(fontSize: 40, color: Color(0xFF834d40), fontWeight: FontWeight.bold),),
+            Text("CATEGORIAS", style: TextStyle(fontSize: 40, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
@@ -203,7 +203,7 @@ class _PesquisaCategoriaState extends State<PesquisaCategoria> {
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

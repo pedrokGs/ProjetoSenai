@@ -29,6 +29,23 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
     }
   }
 
+  double _scale = 1.0;
+
+  void _aumentar() {
+    setState(() {
+      _scale = 1.2; // Aumenta um pouco o tamanho
+    });
+    // Espera um pouquinho e volta ao tamanho normal
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        _scale = 1.0;
+      });
+      // Aqui você pode colocar a ação do seu botão
+      print('Botão clicado!');
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final String categoria =
@@ -45,7 +62,7 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
         child: Column(
@@ -104,23 +121,28 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
+                                                _aumentar();
                                                 Navigator.pushNamed(
                                                   context,
                                                   '/detalhesLivro',
                                                   arguments: livro.id,
                                                 );
                                               },
-                                              child: CachedNetworkImage(
-                                                imageUrl: livro['imagem'],
-                                                height: 200,
-                                                width: 120,
-                                                fit: BoxFit.cover,
-                                                placeholder:
-                                                    (context, url) =>
-                                                        CircularProgressIndicator(),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.error),
+                                              child: AnimatedScale(
+                                                duration: const Duration(milliseconds: 150),
+                                                scale: _scale,
+                                                child: CachedNetworkImage(
+                                                  imageUrl: livro['imagem'],
+                                                  height: 200,
+                                                  width: 120,
+                                                  fit: BoxFit.cover,
+                                                  placeholder:
+                                                      (context, url) =>
+                                                          CircularProgressIndicator(),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.error),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -145,7 +167,7 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

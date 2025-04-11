@@ -27,7 +27,7 @@ class _PesquisarState extends State<Pesquisar> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
 
       body: Column(
@@ -155,7 +155,7 @@ class _PesquisarState extends State<Pesquisar> {
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

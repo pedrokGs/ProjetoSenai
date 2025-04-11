@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../ProfileImage.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -87,16 +89,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          "VORTEXUS",
-          style: TextStyle(
-            fontSize: 30,
-            fontFamily: 'Harmoni',
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                "VORTEXUS",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontFamily: 'Harmoni',
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/perfil');
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ProfileImage(),
+                ),
+              ),
+          ],
         ),
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
         child: Column(
@@ -111,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
                   ),
                   Container(
-                    decoration: BoxDecoration(color: Color(0xFFedc9af)),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary),
                     child: FutureBuilder<List<String>>(
                       future: getLivrosLidos(userId),
                       builder: (context, snapshotLivrosLidos) {
@@ -249,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                                                   context,
                                                 ).size.width,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFedc9af),
+                                              color: Theme.of(context).colorScheme.secondary,
                                             ),
                                             child: Row(
                                               children: [
@@ -298,7 +315,7 @@ class _HomePageState extends State<HomePage> {
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

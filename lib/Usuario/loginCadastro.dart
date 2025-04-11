@@ -85,7 +85,7 @@ class _loginCadastroState extends State<loginCadastro> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Color(0xFFedc9af),
+            color: Theme.of(context).colorScheme.secondary,
           ),
           width: MediaQuery.of(context).size.width * 0.9,
           height: MediaQuery.of(context).size.height * 0.85,

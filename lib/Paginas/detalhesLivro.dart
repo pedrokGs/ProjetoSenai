@@ -39,7 +39,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color(0xFF834d40),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: livro.get(),
@@ -72,7 +72,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                       height: 100, // Altura semelhante ao cabeçalho da imagem
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF834d40),
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(24.0),
                         ),
@@ -152,7 +152,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                               height: 90,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: const Color(0xFFedc9af),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                               padding: const EdgeInsets.all(12),
                               child: Column(
@@ -178,7 +178,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: const Color(0xFFedc9af),
+                                  color: Theme.of(context).colorScheme.secondary,
                                 ),
                                 padding: const EdgeInsets.all(12),
                                 child: SingleChildScrollView(
@@ -218,7 +218,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  backgroundColor: const Color(0xFF834d40),
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
                                   padding: const EdgeInsets.all(16),
                                 ),
                                 onPressed: () async {
@@ -270,7 +270,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                 ),
                 collapsed: Container(
                   alignment: Alignment.center,
-                  color: const Color(0xFF834d40),
+                  color: Theme.of(context).colorScheme.primary,
                   child: const Text(
                     "Deslize para ver mais detalhes do livro",
                     style: TextStyle(

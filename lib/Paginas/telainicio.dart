@@ -85,7 +85,7 @@ class _telaInicioState extends State<telaInicio> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          backgroundColor: Color(0xFFedc9af),
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
                           padding: EdgeInsets.symmetric(
                             horizontal: 50,
                             vertical: 20,
@@ -150,7 +150,7 @@ class _telaInicioState extends State<telaInicio> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          backgroundColor: Color(0xFFedc9af),
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
                           padding: EdgeInsets.symmetric(
                             horizontal: 50,
                             vertical: 20,
