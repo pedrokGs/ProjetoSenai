@@ -29,18 +29,31 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
     }
   }
 
+  Future<List<DocumentSnapshot>> getAudiobooksCategoria(String categoria) async {
+    try {
+      QuerySnapshot querySnapshot =
+      await _firestoreService.firestore
+          .collection('audiobooks')
+          .where('categoria', arrayContains: categoria)
+          .get();
+      return querySnapshot.docs;
+    } catch (e) {
+      print('Erro ao obter audiobooks por categoria: $e');
+      return [];
+    }
+  }
+
+
   double _scale = 1.0;
 
   void _aumentar() {
     setState(() {
-      _scale = 1.2; // Aumenta um pouco o tamanho
+      _scale = 1.2;
     });
-    // Espera um pouquinho e volta ao tamanho normal
     Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
         _scale = 1.0;
       });
-      // Aqui você pode colocar a ação do seu botão
       print('Botão clicado!');
     });
   }
@@ -151,6 +164,99 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
                                     },
                                   );
                                 }).toList(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    " Principais Audiobooks de ${categoria}",
+                    style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(color: Color(0xFFedc9af)),
+                    child: FutureBuilder<List<DocumentSnapshot>>(
+                      future: getAudiobooksCategoria(
+                        categoria,
+                      ),
+                      builder: (context, snapshotAudiobooks) {
+                        if (snapshotAudiobooks.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        if (snapshotAudiobooks.hasError ||
+                            !snapshotAudiobooks.hasData ||
+                            snapshotAudiobooks.data!.isEmpty) {
+                          return Text(
+                            'Nenhum audiobook encontrado para esta categoria.',
+                          );
+                        }
+                        final audiobooks = snapshotAudiobooks.data!;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              height: 200.0,
+                              enableInfiniteScroll: true,
+                              disableCenter: true,
+                              viewportFraction: 0.45,
+                            ),
+                            items:
+                            audiobooks.map((audiobook) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    width:
+                                    MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFedc9af),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            _aumentar();
+                                            Navigator.pushNamed(
+                                              context,
+                                              '/detalhesAudiobook',
+                                              arguments: audiobook.id,
+                                            );
+                                          },
+                                          child: AnimatedScale(
+                                            duration: const Duration(milliseconds: 150),
+                                            scale: _scale,
+                                            child: CachedNetworkImage(
+                                              imageUrl: audiobook['imagem'],
+                                              height: 200,
+                                              width: 120,
+                                              fit: BoxFit.cover,
+                                              placeholder:
+                                                  (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }).toList(),
                           ),
                         );
                       },

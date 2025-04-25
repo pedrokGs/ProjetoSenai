@@ -138,7 +138,6 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                         ],
                       ),
                     ),
-                    // Conteúdo do painel
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -191,6 +190,7 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                               ),
                             ),
                             const SizedBox(height: 24),
+                            /*
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -211,6 +211,8 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                 ),
                               ),
                             ),
+
+                             */
                             SizedBox(height: 24),
                             SizedBox(
                               width: double.infinity,
@@ -240,18 +242,22 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                             )
                                             : [];
 
-                                    leiturasAtuais.add(livroId);
-
-                                    await userRef.update({
-                                      'leituras': leiturasAtuais,
-                                    });
+                                    if (!leiturasAtuais.contains(livroId)) {
+                                      leiturasAtuais.add(livroId);
+                                      await userRef.update({
+                                        'leituras': leiturasAtuais,
+                                      });
+                                      Navigator.pushNamed(context, '/home');
+                                    } else {
+                                      print('Livro já adicionado à lista de leituras.');
+                                      Navigator.pushNamed(context, '/home');
+                                    }
                                   } else {
                                     await userRef.update({
                                       'leituras': [livroId],
                                     });
+                                    Navigator.pushNamed(context, '/home');
                                   }
-
-                                  Navigator.pushNamed(context, '/home');
                                 },
 
                                 child: const Text(

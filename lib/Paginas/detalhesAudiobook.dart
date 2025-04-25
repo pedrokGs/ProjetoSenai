@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../FirebaseAuthService.dart';
 
 class DetalhesAudiobook extends StatefulWidget {
   const DetalhesAudiobook({super.key});
@@ -12,11 +15,19 @@ class DetalhesAudiobook extends StatefulWidget {
 class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
   @override
   Widget build(BuildContext context) {
-    final String audiobookId = ModalRoute.of(context)!.settings.arguments as String;
+    FirebaseAuthService _firebaseAuth = FirebaseAuthService();
+    late User? user = _firebaseAuth.getCurrentUser();
+    late String userId = user!.uid;
+    final String audiobookId =
+        ModalRoute.of(context)!.settings.arguments as String;
 
     final DocumentReference audiobook = FirebaseFirestore.instance
         .collection('audiobooks')
         .doc(audiobookId);
+
+    final DocumentReference userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId);
 
     return Scaffold(
       appBar: AppBar(
@@ -130,7 +141,10 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                     // Conteúdo do painel
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -154,23 +168,15 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                     ),
                                   ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         data['autor'] ?? 'Autor não disponível',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        data['categoria'] ?? 'Categoria disponível',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                        ),
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                     ],
-                                  )
-
+                                  ),
                                 ],
                               ),
                             ),
@@ -179,15 +185,14 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                                 padding: const EdgeInsets.all(12),
                                 child: SingleChildScrollView(
                                   child: Text(
                                     data['sinopse'] ?? "Sinopse indisponível",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ),
                               ),
@@ -200,10 +205,43 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
                                   padding: const EdgeInsets.all(16),
                                 ),
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  final userDoc = await userRef.get();
+
+                                  if (userDoc.exists &&
+                                      userDoc.data() != null) {
+                                    final userData =
+                                        userDoc.data()! as Map<String, dynamic>;
+                                    List<dynamic> audiobooksAtuais =
+                                        userData['audiobooks'] != null
+                                            ? List<dynamic>.from(
+                                              userData['audiobooks'],
+                                            )
+                                            : [];
+
+                                    if (!audiobooksAtuais.contains(audiobookId)) {
+                                      audiobooksAtuais.add(audiobookId);
+                                      await userRef.update({
+                                        'audiobooks': audiobooksAtuais,
+                                      });
+                                      Navigator.pushNamed(context, '/home');
+                                    } else {
+                                      print(
+                                        'Audiobook já adicionado à lista de leituras.',
+                                      );
+                                      Navigator.pushNamed(context, '/home');
+                                    }
+                                  } else {
+                                    await userRef.update({
+                                      'audiobooks': [audiobookId],
+                                    });
+                                    Navigator.pushNamed(context, '/home');
+                                  }
+                                },
                                 child: const Text(
                                   'Ouvir agora',
                                   style: TextStyle(
@@ -213,7 +251,8 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 24,),
+                            SizedBox(height: 24),
+                            /*
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -221,7 +260,8 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
                                   padding: const EdgeInsets.all(16),
                                 ),
                                 onPressed: () async {},
@@ -234,6 +274,8 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                 ),
                               ),
                             ),
+
+                             */
                           ],
                         ),
                       ),
@@ -254,7 +296,9 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                 ),
                 minHeight: 80,
                 maxHeight: MediaQuery.of(context).size.height * 0.6,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24.0),
+                ),
               ),
             ],
           );

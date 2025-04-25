@@ -115,200 +115,218 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    " Leituras Iniciadas",
-                    style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary),
-                    child: FutureBuilder<List<String>>(
-                      future: getLivrosLidos(userId),
-                      builder: (context, snapshotLivrosLidos) {
-                        if (snapshotLivrosLidos.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        }
-                        if (snapshotLivrosLidos.hasError ||
-                            !snapshotLivrosLidos.hasData) {
-                          return Text('Erro ao carregar livros lidos');
-                        }
-                        List<String> livrosLidos = snapshotLivrosLidos.data!;
-                        return StreamBuilder<QuerySnapshot>(
-                          stream: getLivrosFiltrados(livrosLidos),
-                          builder: (context, snapshotLivros) {
-                            if (!snapshotLivros.hasData) {
-                              return CircularProgressIndicator();
-                            }
-                            final livros = snapshotLivros.data!.docs;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                              ),
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 200.0,
-                                  enableInfiniteScroll: true,
-                                  disableCenter: true,
-                                  viewportFraction: 0.45,
-                                ),
-                                items:
-                                    livros.map((livro) {
-                                      return Builder(
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: 5,
-                                            ),
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFedc9af),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(context, '/detalhesLivro', arguments: livro.id);
-                                                  },
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: livro['imagem'],
-                                                    height: 200,
-                                                    width: 120,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            CircularProgressIndicator(),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Icon(Icons.error),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    }).toList(),
-                              ),
-                            );
-                          },
-                        );
-                      },
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      " Leituras Iniciadas",
+                      style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    " Audiobooks iniciados",
-                    style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(color: Color(0xFFedc9af)),
-                    child: FutureBuilder<List<String>>(
-                      future: getAudiobooksEscutados(userId),
-                      builder: (context, snapshotAudiobooksEscutados) {
-                        if (snapshotAudiobooksEscutados.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        }
-                        if (snapshotAudiobooksEscutados.hasError ||
-                            !snapshotAudiobooksEscutados.hasData) {
-                          return Text('Erro ao carregar audiobooks escutados');
-                        }
-                        List<String> audiobooksEscutados =
-                            snapshotAudiobooksEscutados.data!;
-                        return StreamBuilder<QuerySnapshot>(
-                          stream: getAudiobooksFiltrados(audiobooksEscutados),
-                          builder: (context, snapshotAudiobooks) {
-                            if (!snapshotAudiobooks.hasData) {
-                              return CircularProgressIndicator();
-                            }
-                            final audibooks = snapshotAudiobooks.data!.docs;
+                    Container(
+        
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary),
+                      child: FutureBuilder<List<String>>(
+                        future: getLivrosLidos(userId),
+                        builder: (context, snapshotLivrosLidos) {
+                          List<String> livrosLidos = snapshotLivrosLidos.data!;
+                          if (livrosLidos.isEmpty) {
                             return Padding(
-                              // Adiciona padding
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                              ),
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 200.0,
-                                  enableInfiniteScroll: true,
-                                  disableCenter: true,
-                                  viewportFraction: 0.45,
-                                ),
-                                items:
-                                    audibooks.map((audiobook) {
-                                      return Builder(
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: 5,
-                                            ),
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.secondary,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(
-                                                      context,
-                                                      '/detalhesAudiobook',
-                                                      arguments: audiobook.id,
-                                                    );
-                                                  },
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: audiobook['imagem'],
-                                                    height: 200,
-                                                    width: 120,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            CircularProgressIndicator(),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Icon(Icons.error),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    }).toList(),
-                              ),
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text("Nenhuma leitura iniciada ainda.", style: TextStyle(fontSize: 24)),
                             );
-                          },
-                        );
-                      },
+                          }
+                          if (snapshotLivrosLidos.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshotLivrosLidos.hasError ||
+                              !snapshotLivrosLidos.hasData) {
+                            return Text('Erro ao carregar livros lidos');
+                          }
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: getLivrosFiltrados(livrosLidos),
+                            builder: (context, snapshotLivros) {
+                              if (!snapshotLivros.hasData) {
+                                return CircularProgressIndicator();
+                              }
+                              final livros = snapshotLivros.data!.docs;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0,
+                                ),
+                                child: CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: 200.0,
+                                    enableInfiniteScroll: true,
+                                    disableCenter: true,
+                                    viewportFraction: 0.45,
+                                  ),
+                                  items:
+                                      livros.map((livro) {
+                                        return Builder(
+                                          builder: (BuildContext context) {
+                                            return Container(
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                              ),
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFedc9af),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(context, '/detalhesLivro', arguments: livro.id);
+                                                    },
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: livro['imagem'],
+                                                      height: 200,
+                                                      width: 120,
+                                                      fit: BoxFit.cover,
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              CircularProgressIndicator(),
+                                                      errorWidget:
+                                                          (context, url, error) =>
+                                                              Icon(Icons.error),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }).toList(),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Container(),
-          ],
+        
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+        
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      " Audiobooks iniciados",
+                      style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(color: Color(0xFFedc9af)),
+                      child: FutureBuilder<List<String>>(
+                        future: getAudiobooksEscutados(userId),
+                        builder: (context, snapshotAudiobooksEscutados) {
+                          if (snapshotAudiobooksEscutados.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshotAudiobooksEscutados.hasError ||
+                              !snapshotAudiobooksEscutados.hasData) {
+                            return Text('Erro ao carregar audiobooks escutados');
+                          }
+                          List<String> audiobooksEscutados =
+                              snapshotAudiobooksEscutados.data!;
+                          if (audiobooksEscutados.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text("Nenhum audiobook iniciado ainda.", style: TextStyle(fontSize: 24)),
+                            );
+                          }
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: getAudiobooksFiltrados(audiobooksEscutados),
+                            builder: (context, snapshotAudiobooks) {
+                              if (!snapshotAudiobooks.hasData) {
+                                return CircularProgressIndicator();
+                              }
+                              final audibooks = snapshotAudiobooks.data!.docs;
+                              return Padding(
+                                // Adiciona padding
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0,
+                                ),
+                                child: CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: 200.0,
+                                    enableInfiniteScroll: true,
+                                    disableCenter: true,
+                                    viewportFraction: 0.45,
+                                  ),
+                                  items:
+                                      audibooks.map((audiobook) {
+                                        return Builder(
+                                          builder: (BuildContext context) {
+                                            return Container(
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                              ),
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width,
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context).colorScheme.secondary,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                        context,
+                                                        '/detalhesAudiobook',
+                                                        arguments: audiobook.id,
+                                                      );
+                                                    },
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: audiobook['imagem'],
+                                                      height: 200,
+                                                      width: 120,
+                                                      fit: BoxFit.cover,
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              CircularProgressIndicator(),
+                                                      errorWidget:
+                                                          (context, url, error) =>
+                                                              Icon(Icons.error),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }).toList(),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
