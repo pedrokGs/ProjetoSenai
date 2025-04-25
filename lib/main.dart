@@ -3,6 +3,7 @@ import 'package:biblioteca/Paginas/homePage.dart';
 import 'package:biblioteca/Paginas/detalhesLivro.dart';
 import 'package:biblioteca/Paginas/kidsPage.dart';
 import 'package:biblioteca/Paginas/meusDados.dart';
+import 'package:biblioteca/Paginas/ouvirAudiobook.dart';
 import 'package:biblioteca/Paginas/paginaCategoria.dart';
 import 'package:biblioteca/Paginas/perfil.dart';
 import 'package:biblioteca/Paginas/perguntasFrequentes.dart';
@@ -10,6 +11,7 @@ import 'package:biblioteca/Paginas/pesquisa_Categoria.dart';
 import 'package:biblioteca/Paginas/pesquisar.dart';
 import 'package:biblioteca/Usuario/loginCadastro.dart';
 import 'package:biblioteca/Paginas/telainicio.dart';
+import 'package:biblioteca/admin/AdminUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
         '/meusDados': (BuildContext context) => MeusDadosPage(),
         '/perguntasFrequentes': (BuildContext context) => FAQPage(),
         '/kids': (BuildContext context) => HomePageKids(),
+        '/ouvirAudiobook': (BuildContext context) => AudiobookPlayer(),
       },
     );
   }

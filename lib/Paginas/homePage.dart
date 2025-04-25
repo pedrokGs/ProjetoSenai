@@ -164,6 +164,7 @@ class _HomePageState extends State<HomePage> {
                                 child: CarouselSlider(
                                   options: CarouselOptions(
                                     height: 200.0,
+                                    enlargeCenterPage: true,
                                     enableInfiniteScroll: true,
                                     disableCenter: true,
                                     viewportFraction: 0.45,
@@ -265,6 +266,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 child: CarouselSlider(
                                   options: CarouselOptions(
+                                    enlargeCenterPage: true,
                                     height: 200.0,
                                     enableInfiniteScroll: true,
                                     disableCenter: true,

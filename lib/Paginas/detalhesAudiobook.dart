@@ -233,7 +233,7 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                                       print(
                                         'Audiobook já adicionado à lista de leituras.',
                                       );
-                                      Navigator.pushNamed(context, '/home');
+                                      Navigator.pushNamed(context, '/ouvirAudiobook');
                                     }
                                   } else {
                                     await userRef.update({

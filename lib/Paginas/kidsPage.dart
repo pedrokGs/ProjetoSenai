@@ -20,33 +20,14 @@ class _HomePageKidsState extends State<HomePageKids> {
   late User? user = _firebaseAuth.getCurrentUser();
   late String userId = user!.uid;
 
-  Future<List<String>> getLivrosInfantis(String userId) async {
-    try {
-      DocumentSnapshot userDoc =
-      await _firestoreService.firestore.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        List<dynamic> leituras = userDoc.get('leituras');
-        return leituras.map((item) => item.toString()).toList();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print('Erro ao obter livros: $e');
-      return [];
-    }
+  Stream<QuerySnapshot> getLivrosInfantis() {
+    return _firestoreService.firestore
+        .collection('livros')
+        .where('kids', isEqualTo: true)
+        .snapshots();
   }
 
-  Stream<QuerySnapshot> getLivrosInfantisFiltrados(List<String> livrosLidos) {
-    if (livrosLidos.isEmpty) {
-      return Stream.empty();
-    } else {
-      return _firestoreService.firestore
-          .collection('livros')
-          .where(FieldPath.documentId, whereIn: livrosLidos)
-          .where('kids', isEqualTo: true)
-          .snapshots();
-    }
-  }
+
 
   Widget buildCarrosselLivro(List<QueryDocumentSnapshot> livros) {
     return CarouselSlider(
@@ -180,94 +161,78 @@ class _HomePageKidsState extends State<HomePageKids> {
                 ),
 
 
-                FutureBuilder<List<String>>(
-                  future: getLivrosInfantis(userId),
-                  builder: (context, snapshotLivros) {
-                    if (snapshotLivros.connectionState == ConnectionState.waiting) {
+                StreamBuilder<QuerySnapshot>(
+                  stream: getLivrosInfantis(),  // Agora usamos diretamente o Stream
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();
                     }
 
-                    if (snapshotLivros.hasError || !snapshotLivros.hasData) {
+                    if (snapshot.hasError || !snapshot.hasData) {
                       return Text('Erro ao carregar livros.');
                     }
 
-                    List<String> livrosLidos = snapshotLivros.data!;
-                    if (livrosLidos.isEmpty) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          "Nenhum livro encontrado. Tente explorar mais!",
-                          style: TextStyle(fontSize: 24),
-                        ),
-                      );
-                    }
+                    var livros = snapshot.data!.docs;
 
-                    return StreamBuilder<QuerySnapshot>(
-                      stream: getLivrosInfantisFiltrados(livrosLidos),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return CircularProgressIndicator();
-                        var livros = snapshot.data!.docs;
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                          child: GridView.count(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 20,
-                            childAspectRatio: 0.55,
-                            children: livros.map((livro) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/detalhesLivro',
-                                    arguments: livro.id,
-                                  );
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueAccent,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl: livro['imagem'],
-                                        height: 180,
-                                        width: 120,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => Icon(Icons.error),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                        child: Text(
-                                          livro['titulo'],
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 20,
+                        childAspectRatio: 0.55,
+                        children: livros.map((livro) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/detalhesLivro',
+                                arguments: livro.id,
                               );
-                            }).toList(),
-                          ),
-                        );
-                      },
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl: livro['imagem'],
+                                    height: 180,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    child: Text(
+                                      livro['titulo'],
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     );
                   },
                 ),
+
                 SizedBox(height: 80),
               ],
             ),
