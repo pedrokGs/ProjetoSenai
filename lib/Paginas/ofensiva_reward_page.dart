@@ -15,10 +15,10 @@ class _RecompensasPageState extends State<RecompensasPage> {
   final _userService = UserService();
   int streakDias = 0;
   final List<Recompensa> recompensas = [
-    Recompensa(diasNecessarios: 20, descricao: 'Desconto no plano por 1 mês'),
-    Recompensa(diasNecessarios: 40, descricao: 'Desconto no plano por 2 meses'),
-    Recompensa(diasNecessarios: 60, descricao: 'Plano gratuito por 1 mês'),
-    Recompensa(diasNecessarios: 80, descricao: 'Desconto de 5% na compra de um livro'),
+    Recompensa(diasNecessarios: 20, descricao: 'Desconto de 5% na compra de um livro'),
+    Recompensa(diasNecessarios: 40, descricao: 'Desconto de 10% na compra de um livro'),
+    Recompensa(diasNecessarios: 60, descricao: 'Desconto de 20% na compra de um livro'),
+    Recompensa(diasNecessarios: 80, descricao: 'Desconto de 33% na compra de um livro'),
   ];
 
   final Set<int> recompensasResgatadas = {};
