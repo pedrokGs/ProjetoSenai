@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../ProfileImage.dart';
+import '../widgets/ProfileImage.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
@@ -19,8 +20,7 @@ class _PerfilPageState extends State<PerfilPage> {
     Future<void> _showLogoutConfirmationDialog() async {
       return showDialog<void>(
         context: context,
-        barrierDismissible:
-            false,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Sair da conta?'),
@@ -39,11 +39,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 },
               ),
               TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor:
-                      Colors
-                          .red,
-                ),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
                 child: const Text('Sair'),
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
@@ -82,164 +78,106 @@ class _PerfilPageState extends State<PerfilPage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 24),
-            ProfileImage(radius: 125),
-            SizedBox(height: 24),
-            if (user != null)
-              FutureBuilder<DocumentSnapshot>(
-                future:
-                    FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .get(),
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot,
-                ) {
-                  if (snapshot.hasError) {
-                    return Text("Algo deu errado ao carregar os dados.");
-                  }
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 24),
+              ProfileImage(radius: 125),
+              SizedBox(height: 24),
+              if (user != null)
+                FutureBuilder<DocumentSnapshot>(
+                  future:
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.uid)
+                          .get(),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot,
+                  ) {
+                    if (snapshot.hasError) {
+                      return Text("Algo deu errado ao carregar os dados.");
+                    }
 
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      Map<String, dynamic> data =
+                          snapshot.data!.data() as Map<String, dynamic>;
 
-                    String nome = data['nome'];
-                    String email = data['email'];
+                      String nome = data['nome'];
+                      String email = data['email'];
 
-                    return Column(
-                      children: [
-                        Text(
-                          "$nome",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                      return Column(
+                        children: [
+                          Text(
+                            "$nome",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          SizedBox(height: 8),
+                          Text("$email", style: TextStyle(fontSize: 20)),
+                        ],
+                      );
+                    }
+
+                    return CircularProgressIndicator();
+                  },
+                )
+              else
+                Text("Nenhum usuário logado."),
+
+              SizedBox(height: 64),
+
+              Padding(
+                padding: EdgeInsets.only(left: 50, right: 50),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      child: ListTile(
+                        title: Text(
+                          "Meus dados",
+                          style: TextStyle(fontSize: 24),
                         ),
-                        SizedBox(height: 8),
-                        Text("$email", style: TextStyle(fontSize: 20)),
-                      ],
-                    );
-                  }
-
-                  return CircularProgressIndicator();
-                },
-              )
-            else
-              Text("Nenhum usuário logado."),
-
-            SizedBox(height: 64),
-
-            Padding(
-              padding: EdgeInsets.only(left: 50, right: 50),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    child: ListTile(
-                      title: Text(
-                        "Frequência de Leitura",
-                        style: TextStyle(fontSize: 24),
+                        leading: Icon(Icons.person, size: 50),
                       ),
-                      leading: Icon(Icons.line_axis_rounded, size: 50),
+                      onTap: () => Navigator.pushNamed(context, '/meusDados'),
                     ),
-                    onTap:
-                        () =>
-                            Navigator.pushNamed(context, '/frequenciaLeitura'),
-                  ),
-                  Divider(color: Colors.grey),
-                  GestureDetector(
-                    child: ListTile(
-                      title: Text("Meus dados", style: TextStyle(fontSize: 24)),
-                      leading: Icon(Icons.person, size: 50),
-                    ),
-                    onTap: () => Navigator.pushNamed(context, '/meusDados'),
-                  ),
-                  Divider(color: Colors.grey),
-                  GestureDetector(
-                    child: ListTile(
-                      title: Text(
-                        "Perguntas Frequentes",
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      leading: Icon(Icons.question_mark, size: 50),
-                    ),
-                    onTap:
-                        () => Navigator.pushNamed(
-                          context,
-                          '/perguntasFrequentes',
+                    Divider(color: Colors.grey),
+                    GestureDetector(
+                      child: ListTile(
+                        title: Text(
+                          "Perguntas Frequentes",
+                          style: TextStyle(fontSize: 24),
                         ),
-                  ),
-                  Divider(color: Colors.grey),
-                  GestureDetector(
-                    child: ListTile(
-                      title: Text(
-                        "Sair da minha conta",
-                        style: TextStyle(fontSize: 24),
+                        leading: Icon(Icons.question_mark, size: 50),
                       ),
-                      leading: Icon(Icons.door_back_door, size: 50),
+                      onTap:
+                          () => Navigator.pushNamed(
+                            context,
+                            '/perguntasFrequentes',
+                          ),
                     ),
-                    onTap: _showLogoutConfirmationDialog,
-                  ),
-                ],
+                    Divider(color: Colors.grey),
+                    GestureDetector(
+                      child: ListTile(
+                        title: Text(
+                          "Sair da minha conta",
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        leading: Icon(Icons.door_back_door, size: 50),
+                      ),
+                      onTap: _showLogoutConfirmationDialog,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Procurar',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.android),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-        ],
-        currentIndex: _selectedIndex, //New
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-
-      switch (_selectedIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/pesquisar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/chatroom');
-          break;
-        case 3:
-          Navigator.pushNamed(context, '/aiChat');
-          break;
-      }
-    });
   }
 }

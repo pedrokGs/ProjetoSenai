@@ -1,4 +1,5 @@
 import 'package:biblioteca/FirebaseAuthService.dart';
+import 'package:biblioteca/services/favorites_service.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +15,44 @@ class DetalhesLivro extends StatefulWidget {
 }
 
 class _DetalhesLivroState extends State<DetalhesLivro> {
+  bool? isFavorito;
+  late String userId;
+  late String livroId;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Agora que context está disponível, pega o livroId
+    livroId = ModalRoute.of(context)!.settings.arguments as String;
+
+    final FirebaseAuthService _firebaseAuth = FirebaseAuthService();
+    User? user = _firebaseAuth.getCurrentUser();
+    userId = user!.uid;
+
+    verificarFavorito();
+  }
+
+  Future<void> verificarFavorito() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(userId)
+        .collection('favoritos')
+        .doc(livroId)
+        .get();
+
+    setState(() {
+      isFavorito = doc.exists;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final favoritosService = FavoritosService();
     FirebaseAuthService _firebaseAuth = FirebaseAuthService();
     late User? user = _firebaseAuth.getCurrentUser();
     late String userId = user!.uid;
@@ -28,6 +65,12 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
     final DocumentReference userRef = FirebaseFirestore.instance
         .collection('users')
         .doc(userId);
+
+    @override
+    void initState() {
+      super.initState();
+      verificarFavorito();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -114,6 +157,32 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
                                   ),
                                 ],
                               ),
+                              IconButton(
+                                icon: Icon(
+                                  isFavorito == true? Icons.favorite : Icons.favorite_border,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  final dadosLivro = {
+                                    'titulo': data['titulo'],
+                                    'autor': data['autor'],
+                                    'imagem': data['imagem'],
+                                    'paginas': data['paginas'],
+                                    'leitores': data['leitores'],
+                                  };
+
+                                  if (isFavorito == true) {
+                                    await favoritosService.removerFavorito(userId, livroId);
+                                  } else {
+                                    await favoritosService.adicionarFavorito(userId, livroId, dadosLivro);
+                                  }
+
+                                  setState(() => isFavorito = !isFavorito!
+
+                                  );
+                                },
+                              ),
+
                               Column(
                                 children: [
                                   Text(
@@ -300,3 +369,4 @@ class _DetalhesLivroState extends State<DetalhesLivro> {
     );
   }
 }
+

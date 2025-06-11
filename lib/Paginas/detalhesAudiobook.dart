@@ -34,7 +34,7 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
         title: Text(
           "VORTEXUS",
           style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.05, // Responsivo
+            fontSize: MediaQuery.of(context).size.width * 0.05,
             fontFamily: 'Harmoni',
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -68,9 +68,8 @@ class _DetalhesAudiobookState extends State<DetalhesAudiobook> {
                 color: Color(0xFFfdf2e9),
                 panel: Column(
                   children: [
-                    // Cabeçalho do painel
                     Container(
-                      height: 100, // Altura semelhante ao cabeçalho da imagem
+                      height: 100,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,

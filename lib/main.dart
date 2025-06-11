@@ -1,8 +1,12 @@
+import 'package:biblioteca/Paginas/chat_room.dart';
+import 'package:biblioteca/Paginas/chat_room_selector.dart';
 import 'package:biblioteca/Paginas/detalhesAudiobook.dart';
 import 'package:biblioteca/Paginas/homePage.dart';
 import 'package:biblioteca/Paginas/detalhesLivro.dart';
 import 'package:biblioteca/Paginas/kidsPage.dart';
-import 'package:biblioteca/Paginas/meusDados.dart';
+import 'package:biblioteca/Paginas/meus_dados.dart';
+import 'package:biblioteca/Paginas/ofensiva_main_page.dart';
+import 'package:biblioteca/Paginas/ofensiva_start_page.dart';
 import 'package:biblioteca/Paginas/ouvirAudiobook.dart';
 import 'package:biblioteca/Paginas/paginaCategoria.dart';
 import 'package:biblioteca/Paginas/perfil.dart';
@@ -41,7 +45,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: themeProvider.currentTheme, // Use the theme from ThemeProvider
+      theme: themeProvider.currentTheme.copyWith(pageTransitionsTheme: PageTransitionsTheme(
+        builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder()},
+      ),),
       home: telaInicio(),
       routes: <String, WidgetBuilder>{
         '/loginCadastro': (BuildContext context) => const loginCadastro(),
@@ -56,6 +62,9 @@ class MyApp extends StatelessWidget {
         '/perguntasFrequentes': (BuildContext context) => FAQPage(),
         '/kids': (BuildContext context) => HomePageKids(),
         '/ouvirAudiobook': (BuildContext context) => AudiobookPlayer(),
+        '/chatroom': (BuildContext context) => ChatRoomSelector(),
+        '/ofensiva': (BuildContext context) => OfensivaStartPage(),
+        '/ofensivamainpage': (BuildContext context) => OfensivaMainPage(),
       },
     );
   }

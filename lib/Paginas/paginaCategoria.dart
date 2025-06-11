@@ -4,6 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/bottom_nav_bar.dart';
+
 class PaginaCategoria extends StatefulWidget {
   const PaginaCategoria({super.key});
 
@@ -269,55 +271,7 @@ class _PaginaCategoriaState extends State<PaginaCategoria> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Procurar',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.android),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-        ],
-        currentIndex: _selectedIndex, //New
-        onTap: _onItemTapped,
-      ),
+        bottomNavigationBar: CustomBottomNavBar(selectedIndex: 1)
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-
-      switch (_selectedIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/pesquisar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/chatroom');
-        case 3:
-          Navigator.pushNamed(context, '/aiChat');
-      }
-    });
   }
 }

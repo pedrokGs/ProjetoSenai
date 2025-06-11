@@ -1,5 +1,7 @@
 import 'package:biblioteca/FirebaseAuthService.dart';
 import 'package:biblioteca/FirestoreService.dart';
+import 'package:biblioteca/services/streak_service.dart';
+import 'package:biblioteca/widgets/bottom_nav_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../ProfileImage.dart';
+import '../widgets/ProfileImage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,12 +19,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  final _streakService = StreakService();
   final FirestoreService _firestoreService = FirestoreService();
   final FirebaseAuthService _firebaseAuth = FirebaseAuthService();
 
   late User? user = _firebaseAuth.getCurrentUser();
   late String userId = user!.uid;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _streakService.atualizarStreak();
+  }
 
   Future<List<String>> getLivrosLidos(String userId) async {
     try {
@@ -129,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontSize: 28, fontFamily: 'Harmoni'),
                     ),
                     Container(
-        
+
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary),
                       child: FutureBuilder<List<String>>(
@@ -219,9 +228,9 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-        
+
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-        
+
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,56 +340,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Procurar',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.android),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-        ],
-        currentIndex: _selectedIndex, //New
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0)
     );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
 
-      switch (_selectedIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/pesquisar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/chatroom');
-        case 3:
-          Navigator.pushNamed(context, '/aiChat');
-      }
-    });
-  }
 }
 

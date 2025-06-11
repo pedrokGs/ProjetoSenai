@@ -3,7 +3,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../ProfileImage.dart';
+import '../widgets/ProfileImage.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class SearchResultPage extends StatefulWidget {
   final Future<List<DocumentSnapshot<Object?>>> livrosFuture;
@@ -134,36 +135,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Procurar',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.android),
-            label: 'AI Chat',
-            backgroundColor: Color(0xFF834d40),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+        bottomNavigationBar: CustomBottomNavBar(selectedIndex: 1)
     );
   }
 
@@ -236,25 +208,5 @@ class _SearchResultPageState extends State<SearchResultPage> {
         ),
       ],
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      switch (_selectedIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/pesquisar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/chatroom');
-          break;
-        case 3:
-          Navigator.pushNamed(context, '/aiChat');
-          break;
-      }
-    });
   }
 }

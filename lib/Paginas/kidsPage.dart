@@ -19,64 +19,20 @@ class _HomePageKidsState extends State<HomePageKids> {
 
   late User? user = _firebaseAuth.getCurrentUser();
   late String userId = user!.uid;
+  String _currentFilter = 'ler'; // 'ler' ou 'ouvir'
 
   Stream<QuerySnapshot> getLivrosInfantis() {
-    return _firestoreService.firestore
-        .collection('livros')
-        .where('kids', isEqualTo: true)
-        .snapshots();
-  }
-
-
-
-  Widget buildCarrosselLivro(List<QueryDocumentSnapshot> livros) {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 250.0,
-        enableInfiniteScroll: true,
-        viewportFraction: 0.4,
-        enlargeCenterPage: true,
-      ),
-      items: livros.map((livro) {
-        return Builder(
-          builder: (BuildContext context) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/detalhesLivro', arguments: livro.id);
-              },
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: livro['imagem'],
-                      height: 180,
-                      width: 120,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    livro['titulo'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }).toList(),
-    );
+    if (_currentFilter == 'ler') {
+      return _firestoreService.firestore
+          .collection('livros')
+          .where('kids', isEqualTo: true)
+          .snapshots();
+    } else {
+      return _firestoreService.firestore
+          .collection('audiobooks')
+          .where('kids', isEqualTo: true)
+          .snapshots();
+    }
   }
 
   @override
@@ -160,39 +116,53 @@ class _HomePageKidsState extends State<HomePageKids> {
                   ),
                 ),
 
-
                 StreamBuilder<QuerySnapshot>(
-                  stream: getLivrosInfantis(),  // Agora usamos diretamente o Stream
+                  stream: getLivrosInfantis(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator());
                     }
 
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return Text('Erro ao carregar livros.');
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Erro ao carregar livros.'));
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('Nenhum livro encontrado.'));
                     }
 
                     var livros = snapshot.data!.docs;
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                      child: GridView.count(
+                      child: GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 20,
-                        childAspectRatio: 0.55,
-                        children: livros.map((livro) {
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 20,
+                          childAspectRatio: 0.55,
+                        ),
+                        itemCount: livros.length,
+                        itemBuilder: (context, index) {
+                          final livro = livros[index];
                           return GestureDetector(
                             onTap: () {
+                              _currentFilter == 'ler'?
                               Navigator.pushNamed(
                                 context,
                                 '/detalhesLivro',
                                 arguments: livro.id,
+                              ) :
+                              Navigator.pushNamed(
+                                context,
+                                '/detalhesAudiobook',
+                                arguments: livro.id,
                               );
                             },
                             child: Container(
+                              padding: EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.blueAccent,
                                 borderRadius: BorderRadius.circular(15),
@@ -200,13 +170,19 @@ class _HomePageKidsState extends State<HomePageKids> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CachedNetworkImage(
-                                    imageUrl: livro['imagem'],
-                                    height: 180,
-                                    width: 120,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        imageUrl: livro['imagem'],
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: 10),
                                   Padding(
@@ -227,13 +203,13 @@ class _HomePageKidsState extends State<HomePageKids> {
                               ),
                             ),
                           );
-                        }).toList(),
+                        },
                       ),
                     );
                   },
                 ),
 
-                SizedBox(height: 80),
+                SizedBox(height: 100), // Espaço extra para evitar overflow com os botões
               ],
             ),
           ),
@@ -244,14 +220,18 @@ class _HomePageKidsState extends State<HomePageKids> {
             bottom: 0,
             child: Container(
               color: Color(0xFFFFFF76),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.purple,
+                      backgroundColor: _currentFilter == 'ler'
+                          ? Colors.orangeAccent
+                          : Colors.grey[300],
+                      foregroundColor: _currentFilter == 'ler'
+                          ? Colors.purple
+                          : Colors.grey,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -263,15 +243,27 @@ class _HomePageKidsState extends State<HomePageKids> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.purple,
+                        color: _currentFilter == 'ler'
+                            ? Colors.purple
+                            : Colors.grey,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_currentFilter != 'ler') {
+                        setState(() {
+                          _currentFilter = 'ler';
+                        });
+                      }
+                    },
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.blueAccent,
+                      backgroundColor: _currentFilter == 'ouvir'
+                          ? Colors.orangeAccent
+                          : Colors.grey[300],
+                      foregroundColor: _currentFilter == 'ouvir'
+                          ? Colors.blueAccent
+                          : Colors.grey,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -283,10 +275,18 @@ class _HomePageKidsState extends State<HomePageKids> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: _currentFilter == 'ouvir'
+                            ? Colors.blueAccent
+                            : Colors.grey,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_currentFilter != 'ouvir') {
+                        setState(() {
+                          _currentFilter = 'ouvir';
+                        });
+                      }
+                    },
                   ),
                 ],
               ),

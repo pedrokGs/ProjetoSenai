@@ -1,12 +1,16 @@
 import 'package:biblioteca/FirestoreService.dart';
+import 'package:biblioteca/Paginas/favoritos.dart';
+import 'package:biblioteca/Paginas/livros_page.dart';
 import 'package:biblioteca/Paginas/searchResultPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../ThemeProvider.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class Pesquisar extends StatefulWidget {
   const Pesquisar({super.key});
@@ -179,7 +183,9 @@ fit: BoxFit.contain,
 
 */
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MaisLidosPage(),));
+                  },
 
                   child: Container(
                     padding: EdgeInsets.all(4),
@@ -268,7 +274,9 @@ fit: BoxFit.contain,
 
 */
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritosPage(userId: FirebaseAuth.instance.currentUser!.uid),));
+                  },
 
                   child: Container(
                     padding: EdgeInsets.all(4),
@@ -290,55 +298,7 @@ fit: BoxFit.contain,
         ],
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Procurar',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.android),
-            label: 'Chats',
-            backgroundColor: Color(0xFF834d40),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+        bottomNavigationBar: CustomBottomNavBar(selectedIndex: 1)
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-
-      switch (_selectedIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/pesquisar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/chatroom');
-        case 3:
-          Navigator.pushNamed(context, '/aiChat');
-      }
-    });
   }
 }
